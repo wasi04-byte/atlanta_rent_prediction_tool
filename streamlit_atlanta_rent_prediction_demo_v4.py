@@ -9,7 +9,6 @@ warnings.filterwarnings("ignore")
 # Model and scaler file paths
 xgb_filename = 'atlanta_xgb_model.sav'
 svr_filename = 'atlanta_svr_model.sav'
-rf_filename = 'atlanta_rf_model.sav' 
 ols_filename = 'atlanta_ols_model.sav'
 scaler_filename = "atlanta_scaler.pkl"
 
@@ -17,7 +16,6 @@ scaler_filename = "atlanta_scaler.pkl"
 loaded_scaler = pickle.load(open(scaler_filename, 'rb'))
 loaded_xgb_model = pickle.load(open(xgb_filename, 'rb'))
 loaded_svr_model = pickle.load(open(svr_filename, 'rb'))
-loaded_rf_model = pickle.load(open(rf_filename, 'rb'))
 loaded_ols_model = pickle.load(open(ols_filename, 'rb'))
 
 # Feature details
