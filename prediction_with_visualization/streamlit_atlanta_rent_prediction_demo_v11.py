@@ -10,10 +10,10 @@ from PIL import Image
 warnings.filterwarnings("ignore")
 
 # Model and scaler file paths
-xgb_filename = 'loaded_models/atlanta_xgb_model.sav'
-svr_filename = 'loaded_models/atlanta_svr_model.sav'
-ols_filename = 'loaded_models/atlanta_ols_model.sav'
-scaler_filename = 'loaded_models/atlanta_scaler.pkl'
+xgb_filename = 'prediction_with_visualization/atlanta_xgb_model.sav'
+svr_filename = 'prediction_with_visualization/atlanta_svr_model.sav'
+ols_filename = 'prediction_with_visualization/atlanta_ols_model.sav'
+scaler_filename = 'prediction_with_visualization/atlanta_scaler.pkl'
 
 # Load models and scaler
 loaded_scaler = pickle.load(open(scaler_filename, 'rb'))
