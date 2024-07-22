@@ -10,10 +10,10 @@ from PIL import Image
 warnings.filterwarnings("ignore")
 
 # Model and scaler file paths
-xgb_filename = 'prediction_with_visualization/atlanta_xgb_model.sav'
-svr_filename = 'prediction_with_visualization/atlanta_svr_model.sav'
-ols_filename = 'prediction_with_visualization/atlanta_ols_model.sav'
-scaler_filename = "prediction_with_visualization/atlanta_scaler.pkl"
+xgb_filename = 'loaded_models/atlanta_xgb_model.sav'
+svr_filename = 'loaded_models/atlanta_svr_model.sav'
+ols_filename = 'loaded_models/atlanta_ols_model.sav'
+scaler_filename = 'loaded_models/atlanta_scaler.pkl'
 
 # Load models and scaler
 loaded_scaler = pickle.load(open(scaler_filename, 'rb'))
@@ -219,11 +219,20 @@ elif page == "Visualization":
     st.sidebar.header("Filter Data")
     selected_beds = st.sidebar.multiselect('Select Number of Beds', options=df['bed'].unique(), default=df['bed'].unique())
     selected_baths = st.sidebar.multiselect('Select Number of Baths', options=df['bath'].unique(), default=df['bath'].unique())
-    selected_years = st.sidebar.slider('Select Year Built Range', min_value=int(df['yearBuilt'].min()), max_value=int(df['yearBuilt'].max()), value=(int(df['yearBuilt'].min()), int(df['yearBuilt'].max())))
+    selected_years = st.sidebar.slider('Select Year Built Range', 
+                                    min_value=int(df['yearBuilt'].min()), 
+                                    max_value=int(df['yearBuilt'].max()), 
+                                    value=(int(df['yearBuilt'].min()), int(df['yearBuilt'].max())))
+    selected_area = st.sidebar.slider('Select Area (sqft) Range', 
+                                    min_value=int(df['area_sqft'].min()), 
+                                    max_value=int(df['area_sqft'].max()), 
+                                    value=(int(df['area_sqft'].min()), int(df['area_sqft'].max())))
 
     # Filter DataFrame based on user selections
-    filtered_df = df[(df['bed'].isin(selected_beds)) & (df['bath'].isin(selected_baths)) & (df['yearBuilt'].between(selected_years[0], selected_years[1]))]
-
+    filtered_df = df[(df['bed'].isin(selected_beds)) & 
+                    (df['bath'].isin(selected_baths)) & 
+                    (df['yearBuilt'].between(selected_years[0], selected_years[1])) & 
+                    (df['area_sqft'].between(selected_area[0], selected_area[1]))]
     # Summary statistics
     st.subheader("Summary Statistics")
     st.write(filtered_df.describe())
