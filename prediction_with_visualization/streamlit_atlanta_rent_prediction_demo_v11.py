@@ -172,7 +172,7 @@ if page == "Rental Price Prediction":
             'Controlled Access': st.selectbox('Controlled Access', [0, 1], index=1),
             'Clubhouse': st.selectbox('Clubhouse', [0, 1]),
             'Parking/Garage/Reserved Parking': st.selectbox('Parking/Garage/Reserved Parking', [0, 1]),
-            'Year Built': st.number_input('Year Built', min_value=1900, max_value=2024, value=2020),
+            'Year Built': st.number_input('Year Built (Note: if built after 2020, then defined as new-built, discrete change only for now)', min_value=1900, max_value=2024, value=2020),
             selected_zipcode: 1
         }
 
