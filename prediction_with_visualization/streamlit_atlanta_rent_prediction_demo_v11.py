@@ -25,7 +25,7 @@ loaded_ols_model = pickle.load(open(ols_filename, 'rb'))
 df = pd.read_csv('clean_df_demo_atlanta.csv')  # Update with your CSV file name
 
 # Feature details
-independent_num_columns = ['bed', 'bath', 'area_sqft', 'walkScore', 'transitScore', 'bikeScore']
+independent_num_columns = ['bed', 'bath', 'area_sqft', 'walkScore', 'transitScore', 'bikeScore', 'area_sqft_squared', 'bed_bath_interaction']
 categorical_columns = [
     'Wooden Floor Feature',
     'Sundeck Features',
@@ -124,44 +124,64 @@ if page == "Rental Price Prediction":
     # Input features in the left column
     with col1:
         st.header("Input Features")
-        selected_zipcode = st.selectbox('Zipcode', [
+        
+        # Set default value for zipcode
+        zipcodes = [
             'Zipcode_30306', 'Zipcode_30307', 'Zipcode_30308', 'Zipcode_30309', 
             'Zipcode_30310', 'Zipcode_30312', 'Zipcode_30313', 'Zipcode_30314', 
             'Zipcode_30315', 'Zipcode_30316', 'Zipcode_30318', 'Zipcode_30324', 
             'Zipcode_30332', 'Zipcode_30363'
-        ])
-
+        ]
+        default_zipcode_index = zipcodes.index('Zipcode_30312')
+        selected_zipcode = st.selectbox('Zipcode', zipcodes, index=default_zipcode_index)
+        
+        # Set default value for bed
         bed_options = {"Studio": 0.5, "1 Bed": 1, "2 Beds": 2, "3 Beds": 3, "4 Beds": 4, "5 Beds": 5}
-        selected_bed_label = st.selectbox('Number of Beds', list(bed_options.keys()))
+        default_bed_index = list(bed_options.keys()).index("1 Bed")
+        selected_bed_label = st.selectbox('Number of Beds', list(bed_options.keys()), index=default_bed_index)
         selected_bed_value = bed_options[selected_bed_label]
+
+
+        selected_bath_value = st.selectbox('Number of Baths', [1, 2, 3, 4, 5], index=0)
+        selected_area_sqft = st.number_input('Area (sqft)', value=855)
 
         new_data_point = {
             'bed': selected_bed_value,
-            'bath': st.selectbox('Number of Baths', [1, 2, 3, 4, 5], index=0),
-            'area_sqft': st.number_input('Area (sqft)', value=855),
+            'bath': selected_bath_value,
+            'area_sqft': selected_area_sqft,
             'walkScore': st.number_input('Walk Score', value=80),
             'transitScore': st.number_input('Transit Score', value=50),
             'bikeScore': st.number_input('Bike Score', value=80),
-            'Wooden Floor Feature': st.selectbox('Wooden Floor Feature', [0, 1], index=1),
-            'Granite Countertops': st.selectbox('Granite Countertops', [0, 1]),
+            'Accessibility Features ': st.selectbox('Accessibility Features ', [0, 1], index=1),
+            'Skylight': st.selectbox('Skylight', [0, 1]),
+            'Den/Den Features ': st.selectbox('Den/Den Features ', [0, 1]),
             'Sundeck Features': st.selectbox('Sundeck Features', [0, 1]),
-            'Vinyl Flooring': st.selectbox('Vinyl Flooring', [0, 1]),
+            'Vinyl Flooring': st.selectbox('Vinyl Flooring', [0, 1], index=1),
             'Stainless Steel Appliances': st.selectbox('Stainless Steel Appliances', [0, 1], index=1),
             'Closets': st.selectbox('Large/Walk-in Closets', [0, 1], index=1),
-            'Laundry Facilities': st.selectbox('Laundry Facilities', [0, 1]),
+            'Fire place/pit ': st.selectbox('Fire place/pit ', [0, 1]),
             'Washer and Dryer': st.selectbox('Washer and Dryer', [0, 1], index=1),
             'Gym': st.selectbox('Gym', [0, 1], index=1),
             'Pool': st.selectbox('Pool', [0, 1]),
             'Views': st.selectbox('Views', [0, 1]),
-            'newBuiltFactor': st.selectbox('New Built Factor', [0, 1]),
+            'Guest Features': st.selectbox('Guest Features', [0, 1]),
             'propType_Condo': st.selectbox('Property Type Condo', [0, 1]),
             'propType_Apartment': st.selectbox('Property Type Apartment', [0, 1], index=1),
             'Energy Efficiency Features': st.selectbox('Energy Efficiency Features', [0, 1]),
             'EV Charging': st.selectbox('EV Charging', [0, 1]),
-            '24 Hour Facilities': st.selectbox('24 Hour Facilities', [0, 1], index=1),
+            'Controlled Access': st.selectbox('Controlled Access', [0, 1], index=1),
             'Clubhouse': st.selectbox('Clubhouse', [0, 1]),
+            'Parking/Garage/Reserved Parking': st.selectbox('Parking/Garage/Reserved Parking', [0, 1]),
+            'Year Built': st.number_input('Year Built', min_value=1900, max_value=2024, value=2020),
             selected_zipcode: 1
         }
+
+    # Convert 'Year Built' to 'newBuiltFactor'
+    new_data_point['newBuiltFactor'] = 1 if new_data_point.pop('Year Built') > 2020 else 0
+
+    # Calculate the new features
+    new_data_point['area_sqft_squared'] = new_data_point['area_sqft'] ** 2
+    new_data_point['bed_bath_interaction'] = new_data_point['bed'] * new_data_point['bath']
 
     # Convert new data point to DataFrame
     new_data_df = pd.DataFrame([new_data_point])
@@ -188,9 +208,9 @@ if page == "Rental Price Prediction":
 
     with col2:
         st.header("Predictions")
-        st.write(f"XGBoost Prediction: ${xgb_pred[0]:,.2f}")
-        st.write(f"SVR Prediction: ${svr_pred[0]:,.2f}")
-        st.write(f"OLS Regression Prediction: ${ols_pred[0]:,.2f}")
+        st.write(f"\nBest Model (XGBoost) Prediction: ${xgb_pred[0]:,.2f}")
+        st.write(f"\n2nd Model (SVR) Prediction (unstable now, yet to be tuned): ${svr_pred[0]:,.2f}")
+        st.write(f"\n3rd Model (OLS Linear Model) Prediction (unstable now, yet to be tuned): ${ols_pred[0]:,.2f}")
 
 elif page == "Visualization":
     st.title("Visualization Dashboard")
@@ -240,16 +260,20 @@ elif page == "Visualization":
                                                   'walkScore',
                                                   'transitScore',
                                                   'bikeScore',
-                                                  '24 Hour Facilities',
+                                                  'Guest Features',
                                                   'Accessibility Features',
-                                                  'Air Conditioning',
-                                                  'Garden',
-                                                  'Granite Countertops',
-                                                  'Wooden Floor Feature',
+                                                  'Large Windows',
+                                                  'Den/Den Features',
+                                                  'Gym',
+                                                  'Pool Features',
+                                                  'Energy Efficiency Features',
+                                                  'EV Charging',
                                                   'Skylight',
                                                   'Stainless Steel Appliances',
                                                   'Storage Facilities',
-                                                  'Views'
+                                                  'Views',
+                                                  'Parking/Garage/Reserved Parking',
+                                                  'Washer and Dryer',
                                                   ])
 
     if selected_columns:
@@ -273,5 +297,6 @@ elif page == "Visualization":
         st.write("Please select at least one column to generate the correlation heatmap.")
 
 
+# streamlit run streamlit_atlanta_rent_prediction_demo_v12.py
+# https://rent-prediction-visualization-mw-v11.streamlit.app/
 
-# streamlit run streamlit_atlanta_rent_prediction_demo_v11.py
