@@ -110,10 +110,10 @@ all_cols = independent_num_columns + categorical_columns
 st.set_page_config(layout="wide")
 
 # Page selector
-page = st.sidebar.selectbox("Select Page", ["Rental Price Prediction", "Visualization"])
+page = st.sidebar.selectbox("Select Page", ["Rental Price Estimation", "Visualization"])
 
-if page == "Rental Price Prediction":
-    st.title("Atlanta Rental Price Prediction")
+if page == "Rental Price Estimation":
+    st.title("Atlanta Rental Price Estimation")
 
     # Add logo
     st.image('images/logo.png', width=200)
@@ -208,9 +208,9 @@ if page == "Rental Price Prediction":
 
     with col2:
         st.header("Predictions")
-        st.write(f"\nBest Model (XGBoost) Prediction: ${xgb_pred[0]:,.2f}")
-        st.write(f"\n2nd Model (SVR) Prediction (unstable now, yet to be tuned): ${svr_pred[0]:,.2f}")
-        st.write(f"\n3rd Model (OLS Linear Model) Prediction (unstable now, yet to be tuned): ${ols_pred[0]:,.2f}")
+        st.write(f"\nBest Model (XGBoost) Estimation: ${xgb_pred[0]:,.2f}")
+        st.write(f"\n2nd Model (SVR) Estimation (unstable now, yet to be tuned): ${svr_pred[0]:,.2f}")
+        st.write(f"\n3rd Model (OLS Linear Model) Estimation (unstable now, yet to be tuned): ${ols_pred[0]:,.2f}")
 
 elif page == "Visualization":
     st.title("Visualization Dashboard")
