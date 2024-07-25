@@ -207,7 +207,7 @@ if page == "Rental Price Estimation":
     ols_pred = loaded_ols_model.predict(new_data_df)
 
     with col2:
-        st.header("Predictions")
+        st.header("Rest Estimates")
         st.write(f"\nBest Model (XGBoost) Estimation: ${xgb_pred[0]:,.2f}")
         st.write(f"\n2nd Model (SVR) Estimation (unstable now, yet to be tuned): ${svr_pred[0]:,.2f}")
         st.write(f"\n3rd Model (OLS Linear Model) Estimation (unstable now, yet to be tuned): ${ols_pred[0]:,.2f}")
